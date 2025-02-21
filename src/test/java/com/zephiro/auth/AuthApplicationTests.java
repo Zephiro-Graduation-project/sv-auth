@@ -1,4 +1,4 @@
-package com.moodi.auth;
+package com.zephiro.auth;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
