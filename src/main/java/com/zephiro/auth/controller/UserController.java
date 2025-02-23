@@ -41,27 +41,28 @@ public class UserController {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getMail(), user.getPassword()));
-            
+    
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            
+    
             String token = jwtGenerator.generateToken(authentication);
-
+    
             if (userService.findByMail(user.getMail()) == null) {
-                return new ResponseEntity<>("Authentication failed", HttpStatus.FORBIDDEN);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("{\"error\": \"Authentication failed\"}");
             }
-
-            return new ResponseEntity<>(token, HttpStatus.OK);
-
+    
+            // 🔥 Ahora devolvemos un JSON con el token
+            return ResponseEntity.ok("{\"token\": \"" + token + "\"}");
+    
         } catch (AuthenticationException e) {
-            // Manejar fallo de autenticación
-            System.out.println("Error:\n" + e);
-            return new ResponseEntity<>("Authentication failed", HttpStatus.UNAUTHORIZED);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("{\"error\": \"Invalid credentials\"}");
         } catch (Exception e) {
-            // Manejar otros errores
-            System.out.println("Error:\n" + e);
-            return new ResponseEntity<>("Error occurred during login", HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Error occurred during login\"}");
         }
     }
+    
 
     // ToDo: Manejar la encriptación de la contraseña desde el front
     @PostMapping("/register")
@@ -69,11 +70,15 @@ public class UserController {
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userService.save(user);
-            return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
+            
+            // 🔥 Ahora devolvemos JSON en vez de texto plano
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body("{\"message\": \"User registered successfully\"}");
+    
         } catch (Exception e) {
-            // Manejar errores
             System.out.println("Error:\n" + e);
-            return new ResponseEntity<>("Error occurred during registration", HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Error occurred during registration\"}");
         }
     }
 }
