@@ -1,4 +1,4 @@
-package com.zephiro.auth.model;
+package com.zephiro.auth.entity;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
