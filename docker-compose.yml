@@ -1,0 +1,14 @@
+# ToDo: para el servicio plantilla
+services:
+  app:
+    build:
+      context: .  
+      dockerfile: Dockerfile  
+    container_name: sv-auth
+    ports:
+      - "8090:8090"  
+    environment:
+      SPRING_PROFILES_ACTIVE: ${ENV}  
+    env_file:  
+      - .env  
+    restart: always
