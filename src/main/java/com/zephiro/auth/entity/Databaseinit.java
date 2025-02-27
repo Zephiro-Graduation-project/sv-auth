@@ -13,7 +13,7 @@ import org.springframework.stereotype.Controller;
 import com.zephiro.auth.repository.UserRepository;
 
 @Controller
-@Profile("default")
+@Profile("dev")
 public class Databaseinit implements ApplicationRunner{
 
     @Autowired

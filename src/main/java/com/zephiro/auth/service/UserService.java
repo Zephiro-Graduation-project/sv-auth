@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.zephiro.auth.repository.UserRepository;
 import com.zephiro.auth.DTO.UserDTO;
+import com.zephiro.auth.entity.Account;
 import com.zephiro.auth.entity.UserEntity;
 import com.zephiro.auth.security.JWTGenerator;
 
@@ -30,14 +31,18 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     // ToDo: Manejar la encriptación de la contraseña desde el front
-    public String login(UserDTO user) {
+    public Account login(UserDTO user) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getMail(), user.getPassword()));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            return jwtGenerator.generateToken(authentication);
+            Long id = userRepository.findIdByMail(user.getMail());
+            String name = userRepository.findNameByMail(user.getMail());
+            String token = jwtGenerator.generateToken(authentication);
+
+            return new Account(id, name, token);
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException("Invalid credentials");
         } catch (Exception e) {
