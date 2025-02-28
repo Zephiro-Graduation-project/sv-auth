@@ -4,7 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +19,7 @@ public class JWTGenerator {
     String secret = dotenv.get("JWT_SECRET");
 
     private Key key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-    public Long EXPIRATION_TIME = 2 * 60 * 60 * 1000L; // Esta configurado para durar 2 horas pero puede cambiar
+    public Long EXPIRATION_TIME = 720 * 60 * 60 * 1000L; // 30 days
 
     public String generateToken(Authentication authentication) {
         String username = authentication.getName();
