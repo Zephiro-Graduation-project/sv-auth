@@ -1,4 +1,3 @@
-# ToDo: para el servicio plantilla
 services:
   app:
     build:

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zephiro.auth.DTO.UserDTO;
+import com.zephiro.auth.entity.Account;
 import com.zephiro.auth.entity.UserEntity;
 import com.zephiro.auth.service.UserService;
 
@@ -24,8 +25,8 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO user) {
         try {
-            String token = userService.login(user);
-            return ResponseEntity.ok("{\"token\": \"" + token + "\"}");
+            Account account = userService.login(user);
+            return ResponseEntity.ok(account);
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("{\"error\": \"Invalid credentials\"}");
