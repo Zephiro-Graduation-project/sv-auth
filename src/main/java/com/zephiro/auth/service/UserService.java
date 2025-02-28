@@ -71,15 +71,15 @@ public class UserService {
     }
 
     private String decryptPassword(String encryptedPassword) {
-    try {
-        SecretKeySpec keySpec = new SecretKeySpec(secretKey.getBytes(), "AES");
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        cipher.init(Cipher.DECRYPT_MODE, keySpec);
-        byte[] decodedBytes = Base64.getDecoder().decode(encryptedPassword);
-        byte[] decrypted = cipher.doFinal(decodedBytes);
-        return new String(decrypted);
-    } catch (Exception e) {
-        throw new RuntimeException("Error decrypting password", e);
+        try {
+            SecretKeySpec keySpec = new SecretKeySpec(secretKey.getBytes(), "AES");
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, keySpec);
+            byte[] decodedBytes = Base64.getDecoder().decode(encryptedPassword);
+            byte[] decrypted = cipher.doFinal(decodedBytes);
+            return new String(decrypted);
+        } catch (Exception e) {
+            throw new RuntimeException("Error decrypting password", e);
+        }
     }
-}
 }
