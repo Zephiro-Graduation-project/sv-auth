@@ -24,6 +24,8 @@ public class Databaseinit implements ApplicationRunner{
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        // Elimina todos los usuarios previos
+        userRepository.deleteAll();
 
         // Fecha para inicializar la base de datos
         String date = "19-11-2003";
@@ -34,6 +36,7 @@ public class Databaseinit implements ApplicationRunner{
         String password = "12345678";
         String passwordEncoded = passwordEncoder.encode(password);
 
+        // Crear usuario de pruebas
         userRepository.save(new UserEntity("Alejandro Suarez", "alejandrosuarezacosta@javeriana.edu.co", passwordEncoded, dateFormat));
     }
     

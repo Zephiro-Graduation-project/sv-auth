@@ -2,24 +2,20 @@ package com.zephiro.auth.entity;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "users")
+@Document(collection = "users")
 public class UserEntity {
     
     @Id
-    @GeneratedValue
-    private Long id;
+    private String id;
     private String name;
     private String mail;
     private String password;
     private LocalDate birthdate;
 
-    public UserEntity(Long id, String name, String mail, String password, LocalDate birthdate) {
+    public UserEntity(String id, String name, String mail, String password, LocalDate birthdate) {
         this.id = id;
         this.name = name;
         this.mail = mail;
@@ -37,11 +33,11 @@ public class UserEntity {
     public UserEntity() {
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
