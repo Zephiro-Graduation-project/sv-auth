@@ -48,8 +48,8 @@ public class UserService {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            Long id = userRepository.findIdByMail(user.getMail());
-            String name = userRepository.findNameByMail(user.getMail());
+            String id = userRepository.findByMail(user.getMail()).getId();
+            String name = userRepository.findByMail(user.getMail()).getName();
             String token = jwtGenerator.generateToken(authentication);
 
             return new Account(id, name, token);
