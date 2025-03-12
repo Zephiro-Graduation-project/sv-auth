@@ -70,6 +70,17 @@ public class UserService {
         }
     }
 
+    public void deleteAccount(String id, String mail) {
+        UserEntity userDeleting = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Account not found for ID: " + id));
+    
+        if (!userDeleting.getMail().equals(mail)) {
+            throw new IllegalArgumentException("The email provided does not match the account email");
+        }
+    
+        userRepository.deleteById(id);
+    }    
+
     private String decryptPassword(String encryptedPassword) {
         try {
             SecretKeySpec keySpec = new SecretKeySpec(secretKey.getBytes(), "AES");

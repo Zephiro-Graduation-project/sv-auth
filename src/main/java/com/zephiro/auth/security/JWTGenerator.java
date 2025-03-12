@@ -28,7 +28,6 @@ public class JWTGenerator {
 
         return Jwts.builder()
                 .setSubject(username)
-                .claim("sub", "zephiro")
                 .setIssuedAt(currentDate)
                 .setExpiration(expireDate)
                 .signWith(key, SignatureAlgorithm.HS256)
