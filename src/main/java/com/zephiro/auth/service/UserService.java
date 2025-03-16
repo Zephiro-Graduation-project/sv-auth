@@ -8,7 +8,6 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,34 +39,32 @@ public class UserService {
     private String secretKey;
 
     public Account login(UserDTO user) {
-        try {
-            String decryptedPassword = decryptPassword(user.getPassword());
-
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(user.getMail(), decryptedPassword));
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            String id = userRepository.findByMail(user.getMail()).getId();
-            String name = userRepository.findByMail(user.getMail()).getName();
-            String token = jwtGenerator.generateToken(authentication);
-
-            return new Account(id, name, token);
-        } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("Invalid credentials");
-        } catch (Exception e) {
-            throw new RuntimeException("Error occurred during login");
+        if (!userRepository.existsByMail(user.getMail())) {
+            throw new IllegalArgumentException("Email does not exist");
         }
+
+        String decryptedPassword = decryptPassword(user.getPassword());
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getMail(), decryptedPassword));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String id = userRepository.findByMail(user.getMail()).getId();
+        String name = userRepository.findByMail(user.getMail()).getName();
+        String token = jwtGenerator.generateToken(authentication);
+
+        return new Account(id, name, token);
     }
 
     public void register(UserEntity user) {
-        try {
-            String decryptedPassword = decryptPassword(user.getPassword());
-            user.setPassword(passwordEncoder.encode(decryptedPassword));
-            userRepository.save(user);
-        } catch (Exception e) {
-            throw new RuntimeException("Error occurred during registration", e);
+        if (userRepository.existsByMail(user.getMail())) {
+            throw new IllegalArgumentException("Email already in use");
         }
+
+        String decryptedPassword = decryptPassword(user.getPassword());
+        user.setPassword(passwordEncoder.encode(decryptedPassword));
+        userRepository.save(user);
     }
 
     public void deleteAccount(String id, String mail) {

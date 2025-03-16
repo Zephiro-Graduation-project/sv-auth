@@ -3,8 +3,6 @@ package com.zephiro.auth.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,24 +28,21 @@ public class UserController {
         try {
             Account account = userService.login(user);
             return ResponseEntity.ok(account);
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"Invalid credentials\"}");
-        } catch (UsernameNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("{\"error\": \"Authentication failed\"}");
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("{\"error\": \"Error occurred during login\"}");
+                    .body("{\"error\": \"" + e.getMessage() + "\"}");
         }
     }
-    
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserEntity user) {
         try {
             userService.register(user);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body("{\"message\": \"User registered successfully\"}");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("{\"error\": \"" + e.getMessage() + "\"}");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("{\"error\": \"Error occurred during registration\"}");
@@ -60,11 +55,9 @@ public class UserController {
             userService.deleteAccount(id, mail.getMail());
             return ResponseEntity.ok("{\"message\": \"Account deleted successfully\"}");
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"The email provided does not match the account email\"}");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\": \"" + e.getMessage() + "\"}");
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"Account not found\"}");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"" + e.getMessage() + "\"}");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("{\"error\": \"Error occurred during deletion\"}");
