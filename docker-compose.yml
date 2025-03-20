@@ -5,9 +5,10 @@ services:
       dockerfile: Dockerfile  
     container_name: sv-auth
     ports:
-      - "8090:8090"  
+      - "${PORT}:${PORT}"  
     environment:
       SPRING_PROFILES_ACTIVE: ${ENV}  
+      SERVER_PORT: ${PORT} 
     env_file:  
       - .env  
     restart: always

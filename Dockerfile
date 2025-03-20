@@ -15,7 +15,8 @@ FROM openjdk:17-jdk-alpine
 WORKDIR /app
 
 COPY --from=build /app/target/*.jar app.jar
+COPY .env .env
 
-EXPOSE 8090
+EXPOSE ${SERVER_PORT}
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java -jar app.jar --server.port=${SERVER_PORT}"]
